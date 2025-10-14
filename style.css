@@ -1,3 +1,15 @@
+/* ===========================
+   DND Classes — style.css
+   =========================== */
+
+/* --- Base --- */
+:root {
+  --accent: #c0392b;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
 body {
   background: #0d0d0f;
   color: #e9e9ef;
@@ -5,121 +17,179 @@ body {
   margin: 0;
 }
 
+/* --- Hero (landing) --- */
 .hero {
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.05), rgba(0,0,0,0.85));
+  display: grid;
+  place-items: center;
+  gap: 10px;
   text-align: center;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.05), rgba(0,0,0,0.85));
   position: relative;
-  overflow: hidden;
 }
 
 .hero h1 {
   font-family: 'UnifrakturMaguntia', cursive;
-  font-size: 4rem;
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
   color: #fff;
-  text-shadow: 0 0 15px #c0392b;
+  text-shadow: 0 0 15px var(--accent);
 }
 
 .hero p {
   font-family: 'Cinzel', serif;
-  font-size: 1.2rem;
-  margin-top: 10px;
+  font-size: 1.1rem;
   color: #ccc;
+  margin-bottom: 1rem;
 }
 
-.scroll-down {
+/* --- Portal button --- */
+.portal-btn {
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  padding: .75rem 1.25rem;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  transition: transform .15s ease, background .2s ease;
+}
+.portal-btn:hover { transform: translateY(-2px); background: rgba(255,255,255,0.12); }
+
+/* --- Portal overlay animation --- */
+#portalOverlay {
+  pointer-events: none;
   position: absolute;
-  bottom: 20px;
-  font-size: 1rem;
-  color: #bbb;
-  animation: bounce 1.5s infinite;
+  inset: 0;
+  opacity: 0;
+  background:
+    radial-gradient(closest-side circle at 50% 50%, rgba(100,180,255,.35), transparent 65%),
+    radial-gradient(closest-side circle at 50% 50%, rgba(192,57,43,.5), transparent 35%),
+    radial-gradient(closest-side circle at 50% 50%, rgba(255,255,255,.4), transparent 25%);
+  mix-blend-mode: screen;
+  filter: blur(0px);
+  transform: scale(0.2);
+}
+#portalOverlay.portal-open {
+  animation: portalOpen 0.9s ease forwards;
+}
+@keyframes portalOpen {
+  0%   { opacity: 0; transform: scale(0.2); filter: blur(0px); }
+  50%  { opacity: 1; transform: scale(1.1); filter: blur(2px); }
+  100% { opacity: 0; transform: scale(3.2); filter: blur(6px); }
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
+/* --- Classes section (hidden until portal opens) --- */
 .classes-section {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  display: none; /* revealed by script.js after portal animation */
+  min-height: 100vh;
   background: linear-gradient(180deg, #0a0a0c, #1a181b);
+  padding: 48px 0 56px;
+
+  /* Keep page from hijacking the wheel when cursor is inside section */
+  overscroll-behavior-y: contain;
+}
+
+.section-title {
+  font-family: 'Cinzel', serif;
+  color: #fff;
+  letter-spacing: .04em;
   text-align: center;
+  margin-bottom: 18px;
 }
 
-.class-grid {
+/* --- Horizontal class rail --- */
+.class-rail {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  align-items: stretch;
-  gap: 20px;
-  width: 100%;
-  padding: 0 5%;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(280px, 320px);
+  gap: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 20px 4vw 14px;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-x;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
+/* Optional: nicer horizontal scrollbar */
+.class-rail::-webkit-scrollbar { height: 10px; }
+.class-rail::-webkit-scrollbar-track { background: rgba(255,255,255,0.06); border-radius: 999px; }
+.class-rail::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 999px; }
+.class-rail::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+.rail-hint {
+  text-align: center;
+  color: #aaa;
+  font-size: .9rem;
+  margin-top: 8px;
+}
+
+/* --- Cards --- */
 .class-card {
   position: relative;
+  border-radius: 16px;
   overflow: hidden;
-  border-radius: 15px;
-  cursor: pointer;
-  height: 400px;
+  height: clamp(300px, 42vh, 460px);
   border: 1px solid rgba(255,255,255,0.12);
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  scroll-snap-align: center;
+  transition: transform .25s ease, box-shadow .25s ease;
+  background: #111;
+}
+.class-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.55);
 }
 
 .class-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: filter 0.3s ease, transform 0.3s ease;
+  transition: filter .3s ease, transform .3s ease;
 }
-
 .class-card:hover img {
-  filter: blur(2px) brightness(0.8);
+  filter: blur(2px) brightness(0.85);
   transform: scale(1.05);
-}
-
-.class-card:hover .overlay {
-  opacity: 1;
 }
 
 .overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  place-items: end;
+  background: linear-gradient(to top, rgba(0,0,0,.6) 12%, transparent 60%);
+  padding: 14px 16px;
   opacity: 0;
-  transition: opacity 0.3s ease;
-  padding: 20px;
+  transition: opacity .25s ease;
+  color: #fff;
   font-family: 'Cinzel', serif;
 }
+.class-card:hover .overlay { opacity: 1; }
 
 .overlay h3 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
+  margin: 0 0 6px;
+  font-size: 1.3rem;
+  letter-spacing: .04em;
+}
+.overlay p  {
+  margin: 0;
+  font-size: .95rem;
+  opacity: .95;
 }
 
-.overlay p {
-  font-size: 0.95rem;
-  line-height: 1.4;
+/* --- Mobile tweaks --- */
+@media (max-width: 768px) {
+  .class-rail { grid-auto-columns: 75vw; }
 }
 
-@media (max-width: 992px) {
-  .classes-section { overflow-x: auto; }
-  .class-grid {
-    grid-template-columns: repeat(4, minmax(260px, 1fr));
-    width: max(100%, 4 * 280px);
-    padding-bottom: 10px;
-  }
+/* --- Reduced motion: disable big effects for sensitive users --- */
+@media (prefers-reduced-motion: reduce) {
+  .portal-btn,
+  .class-card,
+  .class-card img,
+  .overlay { transition: none !important; }
+  #portalOverlay.portal-open { animation: none; opacity: 0; }
+  .class-rail { scroll-behavior: auto; }
 }
