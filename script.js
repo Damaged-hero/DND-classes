@@ -248,4 +248,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) simulateLogin(user.provider);
+})
+
+/*
+document.addEventListener("DOMContentLoaded", () => {
+    const loginScreen = document.getElementById("loginScreen");
+    const hero = document.getElementById("hero");
+    const classesSection = document.getElementById(".classes-section");
+
+    const showMainUi = () => {
+        loginScreen.style.display = "none";
+        hero.style.display = "block";
+        classesSection.style.display = "block";
+    };
+    document.getElementById("googleLogin").addEventListener("click", () => {
+        alert("Google login is clicked");
+        showMainUi();
+    });
+    document.getElementById("emailLogin").addEventListener("click", () => {
+        alert("Email login is clicked");
+        showMainUi();
+    });
 });
+*/
+
