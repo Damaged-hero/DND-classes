@@ -229,3 +229,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const startAutoScroll = makeAutoScroller();
   setupPortal(startAutoScroll);
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const loginScreen = doccument.getElementById("loginScreen");
+    const hero = document.getElementById("hero");
+
+    const simulateLogin = (provider) => {
+        localStorage.setItem("user", JSON.stringify({ provider, timestamp: Date.now() }));
+        loginScreen.style.display = "none";
+        hero.style.display = "block";
+        document.querySelector(".classes-section").style.display = "block";
+    };
+
+    document.getElementById("googleLogin").addEventListener("click", () => simulateLogin("google"));
+    document.getElementById("emailLogin").addEventListener("click", () => {
+        new bootstrap.Modal(document.getElementById("emailModal")).show();
+    });
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) simulateLogin(user.provider);
+});
